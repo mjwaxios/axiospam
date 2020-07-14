@@ -17,7 +17,7 @@
  * the License.
  */
 
-// Package pam contains all the functionality for interfacing with Linux
+// Package axiospam contains all the functionality for interfacing with Linux
 // Pluggable Authentication Modules (PAM). Currently, all this package does is
 // check the validity of a user's login passphrase.
 // See http://www.linux-pam.org/Linux-PAM-html/ for more information.
@@ -26,13 +26,8 @@ package axiospam
 import "C"
 
 import (
-	"fmt"
-	"log"
+	"errors"
 	"sync"
-
-	"github.com/pkg/errors"
-
-	"github.com/google/fscrypt/util"
 )
 
 // Pam error values
@@ -52,13 +47,7 @@ var (
 // indicates an error occurred.
 //export userInput
 func userInput(prompt *C.char) *C.char {
-	fmt.Print(C.GoString(prompt))
-	input, err := util.ReadLine()
-	if err != nil {
-		log.Printf("getting input for PAM: %s", err)
-		return nil
-	}
-	return C.CString(input)
+	return C.CString("")
 }
 
 // passphraseInput is run when the callback needs a passphrase from the user. We
@@ -101,23 +90,4 @@ func IsUserLoginToken(username string, password string, quiet bool) error {
 		return ErrPassphrase
 	}
 	return nil
-}
-
-// User  Hold a PAM user to authenticate
-type PAMUser struct {
-	Username      string
-	Password      string
-	Authenticated bool
-}
-
-// ValidateUser takes a username and password and return the results of PAM auth
-func ValidateUser(user *PAMUser) (result bool, err bool) {
-	result = false
-	user.Authenticated = false
-	e := IsUserLoginToken(user.Username, user.Password, true)
-	if e != nil {
-		return false, true
-	}
-	user.Authenticated = true
-	return true, false
 }
