@@ -8,8 +8,8 @@ type PAMUser struct {
 	ErrorReason   error
 }
 
-// ValidateUser takes a username and password and return the results of PAM auth
-func ValidateUser(user *PAMUser) (result bool, err error) {
+// Authenticate takes a username and password and return the results of PAM auth
+func (user *PAMUser) Authenticate() (result bool, err error) {
 	result = false
 	user.Authenticated = false
 	e := IsUserLoginToken(user.Username, user.Password, true)
