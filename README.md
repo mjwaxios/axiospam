@@ -7,6 +7,9 @@ Note:
   as a user and not root, you can only validate your self.  Other methods like pam_sss don't have this
   issue.
 
+
+NOTE: EXAMPLE is out of Date.  ValidateUser is now Authenticate on the PAMUser struct
+
 Example to use this:
 ```
 package main
