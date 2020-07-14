@@ -8,7 +8,7 @@ Note:
   issue.
 
 Example to use this:
-
+```
 package main
 
 import (
@@ -23,4 +23,4 @@ func main() {
 	axiospam.ValidateUser(&person)
 	fmt.Printf("Person %s Authenticated: %v\n", person.Username, person.Authenticated)
 }
-
+```
