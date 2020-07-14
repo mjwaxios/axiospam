@@ -1,6 +1,6 @@
 package axiospam
 
-// PAMUser User  Hold a PAM user to authenticate
+// PAMUser Hold a PAM user to authenticate
 type PAMUser struct {
 	Username      string
 	Password      string
