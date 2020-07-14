@@ -29,11 +29,9 @@ import (
 	"fmt"
 	"log"
 	"sync"
-	"unsafe"
 
 	"github.com/pkg/errors"
 
-	"github.com/google/fscrypt/crypto"
 	"github.com/google/fscrypt/util"
 )
 
@@ -46,7 +44,7 @@ var (
 // lock. tokenToCheck is only ever non-nil when tokenLock is held.
 var (
 	tokenLock    sync.Mutex
-	tokenToCheck *crypto.Key
+	tokenToCheck string
 )
 
 // userInput is run when the callback needs some input from the user. We prompt
@@ -68,15 +66,9 @@ func userInput(prompt *C.char) *C.char {
 // indicates an error occurred.
 //export passphraseInput
 func passphraseInput(prompt *C.char) *C.char {
-	log.Printf("getting secret data for PAM: %q", C.GoString(prompt))
-	if tokenToCheck == nil {
-		log.Print("secret data requested multiple times")
-		return nil
-	}
-
 	// Subsequent calls to passphrase input should fail
-	input := (*C.char)(tokenToCheck.UnsafeToCString())
-	tokenToCheck = nil
+	input := (*C.char)(C.CString(tokenToCheck))
+	tokenToCheck = ""
 	return input
 }
 
@@ -84,18 +76,16 @@ func passphraseInput(prompt *C.char) *C.char {
 // and returns an error otherwise. Note that unless we are currently running as
 // root, this check will only work for the user running this process.
 func IsUserLoginToken(username string, password string, quiet bool) error {
-	log.Printf("Checking login token for %s", username)
-
 	// We require global state for the function. This function never takes
 	// ownership of the token, so it is not responsible for wiping it.
 	tokenLock.Lock()
-	tokenToCheck, _ = crypto.NewKeyFromCString(unsafe.Pointer(C.CString(password)))
+	tokenToCheck = password
 	defer func() {
-		tokenToCheck = nil
+		tokenToCheck = ""
 		tokenLock.Unlock()
 	}()
 
-	transaction, err := Start("fscrypt", username)
+	transaction, err := Start("axiospam", username)
 	if err != nil {
 		return err
 	}
@@ -113,12 +103,21 @@ func IsUserLoginToken(username string, password string, quiet bool) error {
 	return nil
 }
 
+// User  Hold a PAM user to authenticate
+type PAMUser struct {
+	Username      string
+	Password      string
+	Authenticated bool
+}
+
 // ValidateUser takes a username and password and return the results of PAM auth
-func ValidateUser(username string, password string) (result bool, err bool) {
+func ValidateUser(user *PAMUser) (result bool, err bool) {
 	result = false
-	e := IsUserLoginToken(username, password, true)
+	user.Authenticated = false
+	e := IsUserLoginToken(user.Username, user.Password, true)
 	if e != nil {
 		return false, true
 	}
+	user.Authenticated = true
 	return true, false
 }
