@@ -1,3 +1,6 @@
+[![Go Report Card](https://goreportcard.com/badge/github.com/google/fscrypt)](https://goreportcard.com/report/github.com/mjwaxios/axiospam)
+[![License](https://img.shields.io/badge/LICENSE-Apache2.0-ff69b4.svg)](http://www.apache.org/licenses/LICENSE-2.0.html)
+
 README for axiospam
 
 make sure you have a axiospam file in /etc/pam.d
