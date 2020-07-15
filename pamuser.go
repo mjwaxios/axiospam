@@ -50,12 +50,9 @@ type PAMUser struct {
 
 // Authenticate takes the username and password and checks it with PAM
 func (user *PAMUser) Authenticate() (result bool, err error) {
-	result = false
 	user.authenticated = false
-	e := isUserLoginToken(user.Username, user.Password, true)
-	user.errorReason = e
-	if e != nil {
-		return false, e
+	if user.errorReason = isUserLoginToken(user.Username, user.Password, true); user.errorReason != nil {
+		return false, user.errorReason
 	}
 	user.authenticated = true
 	return true, nil
