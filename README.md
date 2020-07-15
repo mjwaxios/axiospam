@@ -7,9 +7,6 @@ Note:
   as a user and not root, you can only validate your self.  Other methods like pam_sss don't have this
   issue.
 
-
-NOTE: EXAMPLE is out of Date.  ValidateUser is now Authenticate on the PAMUser struct
-
 Example to use this:
 ```
 package main
@@ -20,10 +17,11 @@ import (
 	"github.com/mjwaxios/axiospam"
 )
 
-
 func main() {
-    person := axiospam.PAMUser{Username: "testuser", Password: "thisisatestpassword"}
-	axiospam.ValidateUser(&person)
-	fmt.Printf("Person %s Authenticated: %v\n", person.Username, person.Authenticated)
+	p := axiospam.PAMUser{Username: "testana", Password: "thisisatest123"}
+	p.Authenticate()
+	auth, reason := p.IsAuthenticated()
+	fmt.Printf("Person %s Authenticated: %v, Reason: %v\n", p.Username, auth, reason)
 }
+
 ```
