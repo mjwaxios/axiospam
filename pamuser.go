@@ -38,7 +38,10 @@
 // on Ubuntu the pam-devel package is called libpam0g-dev
 package axiospam
 
-import "errors"
+import (
+	"errors"
+	"sync"
+)
 
 // PAMUser holds a PAM user and authentication results
 type PAMUser struct {
@@ -46,10 +49,13 @@ type PAMUser struct {
 	Password      string
 	authenticated bool
 	errorReason   error
+	mutex         sync.RWMutex
 }
 
 // Authenticate takes the username and password and checks it with PAM
 func (user *PAMUser) Authenticate() (result bool, err error) {
+	user.mutex.Lock()
+	defer user.mutex.Unlock()
 	user.authenticated = false
 	if user.errorReason = isUserLoginToken(user.Username, user.Password, true); user.errorReason != nil {
 		return false, user.errorReason
@@ -60,6 +66,8 @@ func (user *PAMUser) Authenticate() (result bool, err error) {
 
 // IsAuthenticated will return the result of the user's authentication
 func (user *PAMUser) IsAuthenticated() (result bool, reason error) {
+	user.mutex.RLock()
+	defer user.mutex.RUnlock()
 	if !user.authenticated && user.errorReason == nil {
 		return false, errors.New("Authenticate not run yet")
 	}
