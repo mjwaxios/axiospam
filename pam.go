@@ -1,6 +1,8 @@
 /*
  * pam.go - Utility functions for interfacing with the PAM libraries.
  *
+ * Modified: 2020 by Michael Wyrick
+ *
  * Copyright 2017 Google Inc.
  * Author: Joe Richey (joerichey@google.com)
  *
@@ -30,132 +32,16 @@ package axiospam
 import "C"
 import (
 	"errors"
-	"log"
 	"os/user"
 	"unsafe"
-
-	"github.com/google/fscrypt/security"
 )
 
 // Handle wraps the C pam_handle_t type. This is used from within modules.
 type handle struct {
-	handle    *C.pam_handle_t
-	status    C.int
-	origPrivs *security.Privileges
+	handle *C.pam_handle_t
+	status C.int
 	// PamUser is the user for whom the PAM module is running.
 	PamUser *user.User
-}
-
-// NewHandle creates a Handle from a raw pointer.
-func newHandle(pamh unsafe.Pointer) (*handle, error) {
-	var err error
-	h := &handle{
-		handle: (*C.pam_handle_t)(pamh),
-		status: C.PAM_SUCCESS,
-	}
-
-	var pamUsername *C.char
-	h.status = C.pam_get_user(h.handle, &pamUsername, nil)
-	if err = h.err(); err != nil {
-		return nil, err
-	}
-
-	h.PamUser, err = user.Lookup(C.GoString(pamUsername))
-	return h, err
-}
-
-func (h *handle) setData(name string, data unsafe.Pointer, cleanup C.CleanupFunc) error {
-	cName := C.CString(name)
-	defer C.free(unsafe.Pointer(cName))
-	h.status = C.pam_set_data(h.handle, cName, data, cleanup)
-	return h.err()
-}
-
-func (h *handle) getData(name string) (unsafe.Pointer, error) {
-	var data unsafe.Pointer
-	cName := C.CString(name)
-	defer C.free(unsafe.Pointer(cName))
-	h.status = C.pam_get_data(h.handle, cName, &data)
-	return data, h.err()
-}
-
-// ClearData remotes the PAM data with the specified name.
-func (h *handle) ClearData(name string) error {
-	return h.setData(name, unsafe.Pointer(C.CString("")), C.CleanupFunc(C.freeData))
-}
-
-// SetSecret sets a copy of the C string secret into the PAM data with the
-// specified name. This copy will be held in locked memory until this PAM data
-// is cleared.
-func (h *handle) SetSecret(name string, secret unsafe.Pointer) error {
-	return h.setData(name, C.copyIntoSecret(secret), C.CleanupFunc(C.freeSecret))
-}
-
-// GetSecret returns a pointer to the C string PAM data with the specified name.
-// This a pointer directory to the data, so it shouldn't be modified. It should
-// have been previously set with SetSecret().
-func (h *handle) GetSecret(name string) (unsafe.Pointer, error) {
-	return h.getData(name)
-}
-
-// SetString sets a string value for the PAM data with the specified name.
-func (h *handle) SetString(name string, s string) error {
-	return h.setData(name, unsafe.Pointer(C.CString(s)), C.CleanupFunc(C.freeData))
-}
-
-// GetString gets a string value for the PAM data with the specified name. It
-// should have been previously set with SetString().
-func (h *handle) GetString(name string) (string, error) {
-	data, err := h.getData(name)
-	if err != nil {
-		return "", err
-	}
-	return C.GoString((*C.char)(data)), nil
-}
-
-// GetItem retrieves a PAM information item. This is a pointer directly to the
-// data, so it shouldn't be modified.
-func (h *handle) GetItem(i item) (unsafe.Pointer, error) {
-	var data unsafe.Pointer
-	h.status = C.pam_get_item(h.handle, C.int(i), &data)
-	if err := h.err(); err != nil {
-		return nil, err
-	}
-	if data == nil {
-		return nil, errors.New("item not found")
-	}
-	return data, nil
-}
-
-// StartAsPamUser sets the effective privileges to that of the PAM user.
-func (h *handle) StartAsPamUser() error {
-	userPrivs, err := security.UserPrivileges(h.PamUser)
-	if err != nil {
-		return err
-	}
-	origPrivs, err := security.ProcessPrivileges()
-	if err != nil {
-		return err
-	}
-	if err = security.SetProcessPrivileges(userPrivs); err != nil {
-		return err
-	}
-	h.origPrivs = origPrivs
-	return nil
-}
-
-// StopAsPamUser restores the original privileges that were running the
-// PAM module (this is usually root).
-func (h *handle) StopAsPamUser() error {
-	if h.origPrivs == nil {
-		return nil
-	}
-	err := security.SetProcessPrivileges(h.origPrivs)
-	h.origPrivs = nil
-	if err != nil {
-		log.Print(err)
-	}
-	return err
 }
 
 func (h *handle) err() error {

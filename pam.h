@@ -1,6 +1,8 @@
 /*
  * pam.h - Functions to let us call into libpam from Go.
  *
+ * Modified: 2020 by Michael Wyrick
+ *
  * Copyright 2017 Google Inc.
  * Author: Joe Richey (joerichey@google.com)
  *

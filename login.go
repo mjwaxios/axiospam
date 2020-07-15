@@ -1,6 +1,8 @@
 /*
  * login.go - Checks the validity of a login token key against PAM.
  *
+ * Modified: 2020 by Michael Wyrick
+ *
  * Copyright 2017 Google Inc.
  * Author: Joe Richey (joerichey@google.com)
  *

@@ -1,6 +1,8 @@
 /*
  * constants.go - PAM flags and item types from github.com/msteinert/pam
  *
+ *  Modified: 2020 by Michael Wyrick
+ *
  * Modifications Copyright 2017 Google Inc.
  * Modifications Author: Joe Richey (joerichey@google.com)
  *
