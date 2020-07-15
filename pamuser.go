@@ -35,6 +35,8 @@
 //  #auth	required	pam_unix.so
 package axiospam
 
+import "errors"
+
 // PAMUser holds a PAM user and authentication results
 type PAMUser struct {
 	Username      string
@@ -58,5 +60,8 @@ func (user *PAMUser) Authenticate() (result bool, err error) {
 
 // IsAuthenticated will return the result of the user's authentication
 func (user *PAMUser) IsAuthenticated() (result bool, reason error) {
+	if !user.authenticated && user.errorReason == nil {
+		return false, errors.New("Authenticate not run yet")
+	}
 	return user.authenticated, user.errorReason
 }
