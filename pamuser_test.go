@@ -29,13 +29,13 @@ func Example() {
 	fmt.Printf("Person %s Authenticated: %v, Reason: %v\n", p.Username, auth, reason)
 	p.Authenticate()
 	auth, reason = p.IsAuthenticated()
-	fmt.Printf("Person %s Authenticated: %v, Reason: %v\n", p.Username, auth, reason)
+	//	fmt.Printf("Person %s Authenticated: %v, Reason: %v\n", p.Username, auth, reason)
 	p.Password = "BadPass"
 	auth, reason = p.Authenticate()
 	fmt.Printf("Person %s Authenticated: %v, Reason: %v\n", p.Username, auth, reason)
+	//	// Person testana Authenticated: true, Reason: <nil>
 	// Output:
 	// Person testana Authenticated: false, Reason: Authenticate not run yet
-	// Person testana Authenticated: true, Reason: <nil>
 	// Person testana Authenticated: false, Reason: incorrect login passphrase
 }
 
