@@ -53,7 +53,7 @@ func ExamplePAMUser_Authenticate() {
 	auth, reason := p.Authenticate()
 	fmt.Printf("Person %s Authenticated: %v, Reason: %v\n", p.Username, auth, reason)
 	// Output:
-	// Person testana Authenticated: true, Reason: <nil>
+	// Person testana Authenticated: false, Reason: incorrect login passphrase
 }
 
 func ExamplePAMUser_IsAuthenticated() {
@@ -62,5 +62,5 @@ func ExamplePAMUser_IsAuthenticated() {
 	auth, reason := p.IsAuthenticated()
 	fmt.Printf("Person %s Authenticated: %v, Reason: %v\n", p.Username, auth, reason)
 	// Output:
-	// Person testana Authenticated: true, Reason: <nil>
+	// Person testana Authenticated: false, Reason: incorrect login passphrase
 }
