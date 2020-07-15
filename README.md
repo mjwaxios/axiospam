@@ -1,5 +1,7 @@
+[![GoDoc](https://godoc.org/github.com/mjwaxios/axiospam?status.svg)](https://godoc.org/github.com/mjwaxios/axiospam)
 [![Go Report Card](https://goreportcard.com/badge/github.com/google/fscrypt)](https://goreportcard.com/report/github.com/mjwaxios/axiospam)
 [![License](https://img.shields.io/badge/LICENSE-Apache2.0-ff69b4.svg)](http://www.apache.org/licenses/LICENSE-2.0.html)
+[![Coverage Status](https://coveralls.io/repos/github/mjaxios/axiospam/badge.svg?branch=master)](https://coveralls.io/github/mjwaxios/axiosmap?branch=master)
 
 README for axiospam
 
