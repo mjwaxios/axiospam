@@ -17,10 +17,6 @@
  * the License.
  */
 
-// Package axiospam contains all the functionality for interfacing with Linux
-// Pluggable Authentication Modules (PAM). Currently, all this package does is
-// check the validity of a user's login passphrase.
-// See http://www.linux-pam.org/Linux-PAM-html/ for more information.
 package axiospam
 
 import "C"
@@ -32,7 +28,7 @@ import (
 
 // Pam error values
 var (
-	ErrPassphrase = errors.New("incorrect login passphrase")
+	errPassphrase = errors.New("incorrect login passphrase")
 )
 
 // Global state is needed for the PAM callback, so we guard this function with a
@@ -64,7 +60,7 @@ func passphraseInput(prompt *C.char) *C.char {
 // IsUserLoginToken returns nil if the presented token is the user's login key,
 // and returns an error otherwise. Note that unless we are currently running as
 // root, this check will only work for the user running this process.
-func IsUserLoginToken(username string, password string, quiet bool) error {
+func isUserLoginToken(username string, password string, quiet bool) error {
 	// We require global state for the function. This function never takes
 	// ownership of the token, so it is not responsible for wiping it.
 	tokenLock.Lock()
@@ -74,7 +70,7 @@ func IsUserLoginToken(username string, password string, quiet bool) error {
 		tokenLock.Unlock()
 	}()
 
-	transaction, err := Start("axiospam", username)
+	transaction, err := start("axiospam", username)
 	if err != nil {
 		return err
 	}
@@ -87,7 +83,7 @@ func IsUserLoginToken(username string, password string, quiet bool) error {
 	}
 
 	if !authenticated {
-		return ErrPassphrase
+		return errPassphrase
 	}
 	return nil
 }

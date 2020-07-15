@@ -38,7 +38,7 @@ import (
 )
 
 // Handle wraps the C pam_handle_t type. This is used from within modules.
-type Handle struct {
+type handle struct {
 	handle    *C.pam_handle_t
 	status    C.int
 	origPrivs *security.Privileges
@@ -47,9 +47,9 @@ type Handle struct {
 }
 
 // NewHandle creates a Handle from a raw pointer.
-func NewHandle(pamh unsafe.Pointer) (*Handle, error) {
+func newHandle(pamh unsafe.Pointer) (*handle, error) {
 	var err error
-	h := &Handle{
+	h := &handle{
 		handle: (*C.pam_handle_t)(pamh),
 		status: C.PAM_SUCCESS,
 	}
@@ -64,14 +64,14 @@ func NewHandle(pamh unsafe.Pointer) (*Handle, error) {
 	return h, err
 }
 
-func (h *Handle) setData(name string, data unsafe.Pointer, cleanup C.CleanupFunc) error {
+func (h *handle) setData(name string, data unsafe.Pointer, cleanup C.CleanupFunc) error {
 	cName := C.CString(name)
 	defer C.free(unsafe.Pointer(cName))
 	h.status = C.pam_set_data(h.handle, cName, data, cleanup)
 	return h.err()
 }
 
-func (h *Handle) getData(name string) (unsafe.Pointer, error) {
+func (h *handle) getData(name string) (unsafe.Pointer, error) {
 	var data unsafe.Pointer
 	cName := C.CString(name)
 	defer C.free(unsafe.Pointer(cName))
@@ -80,32 +80,32 @@ func (h *Handle) getData(name string) (unsafe.Pointer, error) {
 }
 
 // ClearData remotes the PAM data with the specified name.
-func (h *Handle) ClearData(name string) error {
+func (h *handle) ClearData(name string) error {
 	return h.setData(name, unsafe.Pointer(C.CString("")), C.CleanupFunc(C.freeData))
 }
 
 // SetSecret sets a copy of the C string secret into the PAM data with the
 // specified name. This copy will be held in locked memory until this PAM data
 // is cleared.
-func (h *Handle) SetSecret(name string, secret unsafe.Pointer) error {
+func (h *handle) SetSecret(name string, secret unsafe.Pointer) error {
 	return h.setData(name, C.copyIntoSecret(secret), C.CleanupFunc(C.freeSecret))
 }
 
 // GetSecret returns a pointer to the C string PAM data with the specified name.
 // This a pointer directory to the data, so it shouldn't be modified. It should
 // have been previously set with SetSecret().
-func (h *Handle) GetSecret(name string) (unsafe.Pointer, error) {
+func (h *handle) GetSecret(name string) (unsafe.Pointer, error) {
 	return h.getData(name)
 }
 
 // SetString sets a string value for the PAM data with the specified name.
-func (h *Handle) SetString(name string, s string) error {
+func (h *handle) SetString(name string, s string) error {
 	return h.setData(name, unsafe.Pointer(C.CString(s)), C.CleanupFunc(C.freeData))
 }
 
 // GetString gets a string value for the PAM data with the specified name. It
 // should have been previously set with SetString().
-func (h *Handle) GetString(name string) (string, error) {
+func (h *handle) GetString(name string) (string, error) {
 	data, err := h.getData(name)
 	if err != nil {
 		return "", err
@@ -115,7 +115,7 @@ func (h *Handle) GetString(name string) (string, error) {
 
 // GetItem retrieves a PAM information item. This is a pointer directly to the
 // data, so it shouldn't be modified.
-func (h *Handle) GetItem(i Item) (unsafe.Pointer, error) {
+func (h *handle) GetItem(i item) (unsafe.Pointer, error) {
 	var data unsafe.Pointer
 	h.status = C.pam_get_item(h.handle, C.int(i), &data)
 	if err := h.err(); err != nil {
@@ -128,7 +128,7 @@ func (h *Handle) GetItem(i Item) (unsafe.Pointer, error) {
 }
 
 // StartAsPamUser sets the effective privileges to that of the PAM user.
-func (h *Handle) StartAsPamUser() error {
+func (h *handle) StartAsPamUser() error {
 	userPrivs, err := security.UserPrivileges(h.PamUser)
 	if err != nil {
 		return err
@@ -146,7 +146,7 @@ func (h *Handle) StartAsPamUser() error {
 
 // StopAsPamUser restores the original privileges that were running the
 // PAM module (this is usually root).
-func (h *Handle) StopAsPamUser() error {
+func (h *handle) StopAsPamUser() error {
 	if h.origPrivs == nil {
 		return nil
 	}
@@ -158,7 +158,7 @@ func (h *Handle) StopAsPamUser() error {
 	return err
 }
 
-func (h *Handle) err() error {
+func (h *handle) err() error {
 	if h.status == C.PAM_SUCCESS {
 		return nil
 	}
@@ -168,17 +168,17 @@ func (h *Handle) err() error {
 
 // Transaction represents a wrapped pam_handle_t type created with pam_start
 // form an application.
-type Transaction Handle
+type transaction handle
 
 // Start initializes a pam Transaction. End() should be called after the
 // Transaction is no longer needed.
-func Start(service, username string) (*Transaction, error) {
+func start(service, username string) (*transaction, error) {
 	cService := C.CString(service)
 	defer C.free(unsafe.Pointer(cService))
 	cUsername := C.CString(username)
 	defer C.free(unsafe.Pointer(cUsername))
 
-	t := &Transaction{
+	t := &transaction{
 		handle: nil,
 		status: C.PAM_SUCCESS,
 	}
@@ -187,17 +187,17 @@ func Start(service, username string) (*Transaction, error) {
 		cUsername,
 		C.goConv,
 		&t.handle)
-	return t, (*Handle)(t).err()
+	return t, (*handle)(t).err()
 }
 
 // End finalizes a pam Transaction with pam_end().
-func (t *Transaction) End() {
+func (t *transaction) End() {
 	C.pam_end(t.handle, t.status)
 }
 
 // Authenticate returns a boolean indicating if the user authenticated correctly
 // or not. If the authentication check did not complete, an error is returned.
-func (t *Transaction) Authenticate(quiet bool) (bool, error) {
+func (t *transaction) Authenticate(quiet bool) (bool, error) {
 	var flags C.int = C.PAM_DISALLOW_NULL_AUTHTOK
 	if quiet {
 		flags |= C.PAM_SILENT
@@ -206,5 +206,5 @@ func (t *Transaction) Authenticate(quiet bool) (bool, error) {
 	if t.status == C.PAM_AUTH_ERR {
 		return false, nil
 	}
-	return true, (*Handle)(t).err()
+	return true, (*handle)(t).err()
 }

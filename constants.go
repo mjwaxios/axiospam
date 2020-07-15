@@ -53,58 +53,58 @@ package axiospam
 import "C"
 
 // Item is a PAM information type.
-type Item int
+type item int
 
 // PAM Item types.
 const (
 	// Service is the name which identifies the PAM stack.
-	Service Item = C.PAM_SERVICE
+	service item = C.PAM_SERVICE
 	// User identifies the username identity used by a service.
-	User = C.PAM_USER
+	userc = C.PAM_USER
 	// Tty is the terminal name.
-	Tty = C.PAM_TTY
+	tty = C.PAM_TTY
 	// Rhost is the requesting host name.
-	Rhost = C.PAM_RHOST
+	rhost = C.PAM_RHOST
 	// Authtok is the currently active authentication token.
-	Authtok = C.PAM_AUTHTOK
+	authtok = C.PAM_AUTHTOK
 	// Oldauthtok is the old authentication token.
-	Oldauthtok = C.PAM_OLDAUTHTOK
+	oldauthtok = C.PAM_OLDAUTHTOK
 	// Ruser is the requesting user name.
-	Ruser = C.PAM_RUSER
+	ruser = C.PAM_RUSER
 	// UserPrompt is the string use to prompt for a username.
-	UserPrompt = C.PAM_USER_PROMPT
+	userPrompt = C.PAM_USER_PROMPT
 )
 
 // Flag is used as input to various PAM functions. Flags can be combined with a
 // bitwise or. Refer to the official PAM documentation for which flags are
 // accepted by which functions.
-type Flag int
+type flag int
 
 // PAM Flag types.
 const (
 	// Silent indicates that no messages should be emitted.
-	Silent Flag = C.PAM_SILENT
+	silent flag = C.PAM_SILENT
 	// DisallowNullAuthtok indicates that authorization should fail
 	// if the user does not have a registered authentication token.
-	DisallowNullAuthtok = C.PAM_DISALLOW_NULL_AUTHTOK
+	disallowNullAuthtok = C.PAM_DISALLOW_NULL_AUTHTOK
 	// EstablishCred indicates that credentials should be established
 	// for the user.
-	EstablishCred = C.PAM_ESTABLISH_CRED
+	establishCred = C.PAM_ESTABLISH_CRED
 	// DeleteCred inidicates that credentials should be deleted.
-	DeleteCred = C.PAM_DELETE_CRED
+	deleteCred = C.PAM_DELETE_CRED
 	// ReinitializeCred indicates that credentials should be fully
 	// reinitialized.
-	ReinitializeCred = C.PAM_REINITIALIZE_CRED
+	reinitializeCred = C.PAM_REINITIALIZE_CRED
 	// RefreshCred indicates that the lifetime of existing credentials
 	// should be extended.
-	RefreshCred = C.PAM_REFRESH_CRED
+	refreshCred = C.PAM_REFRESH_CRED
 	// ChangeExpiredAuthtok indicates that the authentication token
 	// should be changed if it has expired.
-	ChangeExpiredAuthtok = C.PAM_CHANGE_EXPIRED_AUTHTOK
+	changeExpiredAuthtok = C.PAM_CHANGE_EXPIRED_AUTHTOK
 	// PrelimCheck indicates that the modules are being probed as to their
 	// ready status for altering the user's authentication token.
-	PrelimCheck = C.PAM_PRELIM_CHECK
+	prelimCheck = C.PAM_PRELIM_CHECK
 	// UpdateAuthtok informs the module that this is the call it should
 	// change the authorization tokens.
-	UpdateAuthtok = C.PAM_UPDATE_AUTHTOK
+	updateAuthtok = C.PAM_UPDATE_AUTHTOK
 )
