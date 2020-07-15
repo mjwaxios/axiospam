@@ -33,6 +33,9 @@
 //
 //  # if we only want the local system use only this
 //  #auth	required	pam_unix.so
+//
+// This also links to libpam so you will need to have libpam-devel installed.
+// on Ubuntu the pam-devel package is called libpam0g-dev
 package axiospam
 
 import "errors"
