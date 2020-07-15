@@ -46,10 +46,21 @@ import (
 // PAMUser holds a PAM user and authentication results
 type PAMUser struct {
 	Username      string
-	Password      string
+	password      string
 	authenticated bool
 	errorReason   error
 	mutex         sync.RWMutex
+}
+
+// New will create a new PAMUser given the name and password
+func New(name, passwd string) *PAMUser {
+	return &PAMUser{Username: name, password: passwd}
+}
+
+// SetPassword will set the password for a user
+func (user *PAMUser) SetPassword(passwd string) error {
+	user.password = passwd
+	return nil
 }
 
 // Authenticate takes the username and password and checks it with PAM
@@ -57,7 +68,7 @@ func (user *PAMUser) Authenticate() (result bool, err error) {
 	user.mutex.Lock()
 	defer user.mutex.Unlock()
 	user.authenticated = false
-	if user.errorReason = isUserLoginToken(user.Username, user.Password, true); user.errorReason != nil {
+	if user.errorReason = isUserLoginToken(user.Username, user.password, true); user.errorReason != nil {
 		return false, user.errorReason
 	}
 	user.authenticated = true
