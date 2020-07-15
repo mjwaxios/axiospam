@@ -23,7 +23,7 @@
 // See http://www.linux-pam.org/Linux-PAM-html/ for more information.
 package axiospam
 
-// PAMUser Hold a PAM user to authenticate
+// PAMUser holds a PAM user and authentication results
 type PAMUser struct {
 	Username      string
 	Password      string
@@ -31,7 +31,7 @@ type PAMUser struct {
 	errorReason   error
 }
 
-// Authenticate takes a username and password and return the results of PAM auth
+// Authenticate takes the username and password and checks it with PAM
 func (user *PAMUser) Authenticate() (result bool, err error) {
 	result = false
 	user.authenticated = false
@@ -44,7 +44,7 @@ func (user *PAMUser) Authenticate() (result bool, err error) {
 	return true, nil
 }
 
-// IsAuthenticated takes a username and password and return the results of PAM auth
+// IsAuthenticated will return the result of the user's authentication
 func (user *PAMUser) IsAuthenticated() (result bool, reason error) {
 	return user.authenticated, user.errorReason
 }
