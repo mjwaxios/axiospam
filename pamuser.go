@@ -21,6 +21,18 @@
 // Pluggable Authentication Modules (PAM). Currently, all this package does is
 // check the validity of a user's login passphrase.
 // See http://www.linux-pam.org/Linux-PAM-html/ for more information.
+//
+// You will need to have a pam module file called axiospam in your pam.d folder.
+//  Example:
+//  $cat /etc/pam.d/axiospam
+//  #%PAM-1.0
+//  # default for a centos system,
+//  auth	   required	pam_sepermit.so
+//  auth       substack     password-auth
+//  auth       include      postlogin
+//
+//  # if we only want the local system use only this
+//  #auth	required	pam_unix.so
 package axiospam
 
 // PAMUser holds a PAM user and authentication results
