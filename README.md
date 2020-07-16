@@ -4,7 +4,8 @@
 
 README for Axios Pam Package
 
-make sure you have a axiospam file in /etc/pam.d
+make sure you have a axiospam file in /etc/pam.d,  This package only uses pam auth, it will not use password, access, nor session modules.
+
 ```
 $cat /etc/pam.d/axiospam 
 
