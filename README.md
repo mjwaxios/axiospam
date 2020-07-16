@@ -3,7 +3,6 @@
 [![License](https://img.shields.io/badge/LICENSE-Apache2.0-ff69b4.svg)](http://www.apache.org/licenses/LICENSE-2.0.html)
 
 [![Build Status](https://travis-ci.org/mjwaxios/axiospam.svg?branch=master)](https://travis-ci.org/mjwaxios/axiospam)
-[![Coverage Status](https://coveralls.io/repos/github/mjwaxios/axiospam/badge.svg?branch=master)](https://coveralls.io/github/mjwaxios/axiospam?branch=master)
 
 README for Axios Pam Package
 
