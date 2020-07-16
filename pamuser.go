@@ -53,8 +53,8 @@ type PAMUser struct {
 }
 
 // New will create a new PAMUser given the name and password
-func New(name, passwd string) *PAMUser {
-	return &PAMUser{Username: name, password: passwd}
+func New(name, passwd string) PAMUser {
+	return PAMUser{Username: name, password: passwd}
 }
 
 // SetPassword will set the password for a user
