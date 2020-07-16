@@ -15,7 +15,6 @@ See the go doc for this package for examples from the code.
 
 Example asking user for a username and password, then authenticating them.
 
-```
 package main
 
 import (
@@ -29,9 +28,13 @@ func main() {
 	user := promptuser.Echo("Enter UserName: ")
 	pass := promptuser.NoEcho("Enter Password: ")
 	p := axiospam.New(user, pass)
-	p.Authenticate()
-	auth, reason := p.IsAuthenticated()
-	fmt.Printf("Person %s Authenticated: %v, Reason: %v\n", p.Username, auth, reason)
+
+	if a, r := p.Authenticate(); a {
+		fmt.Printf("Person %s is Authenticated\n", p.Username)
+	} else {
+		fmt.Printf("Persion %s failed to Authenticate because %v", p.Username, r)
+	}
 }
+```
 
 ```
