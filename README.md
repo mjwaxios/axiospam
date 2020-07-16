@@ -26,14 +26,11 @@ import (
 )
 
 func main() {
-	user := promptuser.Echo("Enter UserName: ")
-	pass := promptuser.NoEcho("Enter Password: ")
-	p := axiospam.New(user, pass)
-
+	p := axiospam.New(promptuser.Echo("Enter UserName: "), promptuser.NoEcho("Enter Password: "))
 	if a, r := p.Authenticate(); a {
 		fmt.Printf("Person %s is Authenticated\n", p.Username)
 	} else {
-		fmt.Printf("Persion %s failed to Authenticate because %v", p.Username, r)
+		fmt.Printf("Persion %s failed to Authenticate because %v\n", p.Username, r)
 	}
 }
 
