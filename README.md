@@ -11,5 +11,27 @@ Note:
   as a user and not root, you can only validate your self.  Other methods like pam_sss don't have this
   issue.
 
-See the go doc for this package for examples.
+See the go doc for this package for examples from the code.
 
+Example asking user for a username and password, then authenticating them.
+
+```
+package main
+
+import (
+	"fmt"
+
+	"github.com/mjwaxios/axiospam"
+	"github.com/mjwaxios/promptuser"
+)
+
+func main() {
+	p := axiospam.New(promptuser.Echo("Enter UserName: "), promptuser.NoEcho("Enter Password: "))
+	if a, r := p.Authenticate(); a {
+		fmt.Printf("Person %s is Authenticated\n", p.Username)
+	} else {
+		fmt.Printf("Persion %s failed to Authenticate because %v\n", p.Username, r)
+	}
+}
+
+```
