@@ -15,6 +15,7 @@ See the go doc for this package for examples from the code.
 
 Example asking user for a username and password, then authenticating them.
 
+```
 package main
 
 import (
@@ -35,6 +36,5 @@ func main() {
 		fmt.Printf("Persion %s failed to Authenticate because %v", p.Username, r)
 	}
 }
-```
 
 ```
