@@ -17,46 +17,20 @@
  * the License.
  */package axiospam_test
 
-import (
-	"fmt"
-
-	"github.com/mjwaxios/axiospam"
-)
-
 func Example() {
-	p := axiospam.New("testana", "thisisatest123")
-	auth, reason := p.IsAuthenticated()
-	fmt.Printf("Person %s Authenticated: %v, Reason: %v\n", p.Username, auth, reason)
-	p.Authenticate()
-	auth, reason = p.IsAuthenticated()
-	//	fmt.Printf("Person %s Authenticated: %v, Reason: %v\n", p.Username, auth, reason)
-	p.SetPassword("BadPass")
-	auth, reason = p.Authenticate()
-	fmt.Printf("Person %s Authenticated: %v, Reason: %v\n", p.Username, auth, reason)
-	//	// Person testana Authenticated: true, Reason: <nil>
-	// Output:
-	// Person testana Authenticated: false, Reason: Authenticate not run yet
-	// Person testana Authenticated: false, Reason: incorrect login passphrase
-}
-
-func ExamplePAMUser() {
-	axiospam.New("testana", "thisisatest123")
-	// Output:
-}
-
-func ExamplePAMUser_Authenticate() {
-	p := axiospam.New("testana", "thisisatest123")
-	auth, reason := p.Authenticate()
-	fmt.Printf("Person %s Authenticated: %v, Reason: %v\n", p.Username, auth, reason)
-	// Output:
-	// Person testana Authenticated: false, Reason: incorrect login passphrase
-}
-
-func ExamplePAMUser_IsAuthenticated() {
-	p := axiospam.New("testana", "thisisatest123")
-	p.Authenticate()
-	auth, reason := p.IsAuthenticated()
-	fmt.Printf("Person %s Authenticated: %v, Reason: %v\n", p.Username, auth, reason)
-	// Output:
-	// Person testana Authenticated: false, Reason: incorrect login passphrase
+	/*
+			p := axiospam.New("testana", "thisisatest123")
+		auth, reason := p.IsAuthenticated()
+		fmt.Printf("Person %s Authenticated: %v, Reason: %v\n", p.Username, auth, reason)
+		p.Authenticate()
+		auth, reason = p.IsAuthenticated()
+		//	fmt.Printf("Person %s Authenticated: %v, Reason: %v\n", p.Username, auth, reason)
+		p.SetPassword("BadPass")
+		auth, reason = p.Authenticate()
+		fmt.Printf("Person %s Authenticated: %v, Reason: %v\n", p.Username, auth, reason)
+		//	// Person testana Authenticated: true, Reason: <nil>
+		// Output:
+		// Person testana Authenticated: false, Reason: Authenticate not run yet
+		// Person testana Authenticated: false, Reason: incorrect login passphrase
+	*/
 }

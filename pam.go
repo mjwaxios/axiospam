@@ -81,9 +81,9 @@ func (t *transaction) End() {
 	C.pam_end(t.handle, t.status)
 }
 
-// Authenticate returns a boolean indicating if the user authenticated correctly
+// authenticate returns a boolean indicating if the user authenticated correctly
 // or not. If the authentication check did not complete, an error is returned.
-func (t *transaction) Authenticate(quiet bool) (bool, error) {
+func (t *transaction) authenticate(quiet bool) (bool, error) {
 	var flags C.int = C.PAM_DISALLOW_NULL_AUTHTOK
 	if quiet {
 		flags |= C.PAM_SILENT
@@ -93,4 +93,32 @@ func (t *transaction) Authenticate(quiet bool) (bool, error) {
 		return false, nil
 	}
 	return true, (*handle)(t).err()
+}
+
+// changeTok changes the user password
+func (t *transaction) changeTok(quiet bool) (int, error) {
+	var flags C.int = C.PAM_DISALLOW_NULL_AUTHTOK
+	if quiet {
+		flags |= C.PAM_SILENT
+	}
+	t.status = C.pam_chauthtok(t.handle, flags)
+
+	switch t.status {
+	case C.PAM_SUCCESS:
+		return 0, nil
+	case C.PAM_AUTHTOK_ERR:
+		return 20, nil
+	}
+
+	return -1, (*handle)(t).err()
+}
+
+func (t *transaction) accountManagement(quiet bool) (int, error) {
+	var flags C.int
+	if quiet {
+		flags |= C.PAM_SILENT
+	}
+	t.status = C.pam_acct_mgmt(t.handle, flags)
+
+	return int(t.status), nil
 }
