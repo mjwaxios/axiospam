@@ -101,6 +101,7 @@ func (t *transaction) changeTok(quiet bool) (int, error) {
 	if quiet {
 		flags |= C.PAM_SILENT
 	}
+	
 	t.status = C.pam_chauthtok(t.handle, flags)
 
 	switch t.status {
