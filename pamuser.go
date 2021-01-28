@@ -42,7 +42,7 @@ import "C"
 
 import (
 	"errors"
-	"fmt"
+//	"fmt"
 	"sync"
 )
 
@@ -230,10 +230,10 @@ var (
 // indicates an error occurred.
 //export userInput
 func userInput(prompt *C.char) *C.char {
-	s := C.GoString(prompt)
-	if s != "" {
-		fmt.Println(s)
-	}
+//	s := C.GoString(prompt)
+//	if s != "" {
+//		fmt.Println(s)
+//	}
 	return C.CString("")
 }
 
@@ -242,12 +242,12 @@ func userInput(prompt *C.char) *C.char {
 // indicates an error occurred.
 //export passphraseInput
 func passphraseInput(prompt *C.char) *C.char {
-	s := C.GoString(prompt)
-	if s != "" {
-		fmt.Print(s)
-	}
+//	s := C.GoString(prompt)
+//	if s != "" {
+//		fmt.Print(s)
+//	}
 	// Subsequent calls to passphrase input should fail
-	fmt.Println(tokenToCheck)
+//	fmt.Println(tokenToCheck)
 	input := (*C.char)(C.CString(tokenToCheck))
 	tokenToCheck = tokenToSet
 
@@ -314,7 +314,6 @@ func changeToken(username, oldpassword, newpassword string, quiet bool) (PamResu
 		return PamAuthERR, nil
 	}
 
-	tokenToCheck = oldpassword
 	tokenToSet = newpassword
 
 	// Ask PAM to change the token.
